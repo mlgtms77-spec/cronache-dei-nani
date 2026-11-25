@@ -1,1 +1,244 @@
+ 
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronache dei Nani</title>
+<style>
+:root {
+  --oro: #c6a46a;
+  --sfondo: #10100f;
+  --testo: #ddd2bf;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--sfondo);
+  color: var(--testo);
+  font-family: Georgia, serif;
+}
+nav {
+  background: #0b0b0b;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #655334;
+}
+nav a {
+  color: var(--oro);
+  text-decoration: none;
+  margin: 0 12px;
+}
+header {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 45px 20px;
+  background: radial-gradient(ellipse,
+    #393024, #10100f 75%);
+  border-bottom: 1px solid #655334;
+}
+.simbolo {
+  font-size: 65px;
+  color: var(--oro);
+}
+h1 {
+  font-size: clamp(38px, 7vw, 85px);
+  color: var(--oro);
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  margin: 25px 0;
+}
+h2 {
+  color: var(--oro);
+  text-align: center;
+  letter-spacing: 3px;
+}
+.sottotitolo {
+  font-size: 21px;
+  font-style: italic;
+  max-width: 650px;
+  line-height: 1.7;
+}
+.pulsante {
+  display: inline-block;
+  padding: 15px 28px;
+  background: var(--oro);
+  color: #16120c;
+  text-decoration: none;
+  border: 0;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+}
+.pulsante:hover {
+  background: #e8cb92;
+}
+section {
+  max-width: 1050px;
+  margin: auto;
+  padding: 65px 25px;
+}
+.ornamento {
+  text-align: center;
+  color: var(--oro);
+  font-size: 24px;
+}
+.indice {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-top: 35px;
+}
+.capitolo {
+  padding: 25px;
+  background: #1b1916;
+  border: 1px solid #554630;
+  color: var(--oro);
+  cursor: pointer;
+  text-align: center;
+  font: 18px Georgia, serif;
+  transition: 0.2s;
+}
+.capitolo:hover {
+  background: #30291f;
+  border-color: var(--oro);
+}
+#lettura {
+  display: none;
+  max-width: 850px;
+}
+#testo {
+  font-size: 20px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+.comandi {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 30px;
+}
+footer {
+  text-align: center;
+  color: #a29278;
+  padding: 35px 20px;
+  border-top: 1px solid #554630;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#introduzione">Il racconto</a>
+  <a href="#indice">Capitoli</a>
+</nav>
+
+<header id="home">
+  <div class="simbolo">⚒</div>
+  <div>UNA SAGA EPICA</div>
+  <h1>Cronache dei Nani</h1>
+  <div class="ornamento">✦ ━━━━━ ✦ ━━━━━ ✦</div>
+  <p class="sottotitolo">
+    Tra gloria, battaglie e antiche leggende,
+    la storia di un popolo destinato
+    a lasciare il proprio segno nel mondo.
+  </p>
+  <a class="pulsante" href="#indice">
+    INIZIA L'AVVENTURA
+  </a>
+</header>
+
+<section id="introduzione">
+  <h2>La leggenda ha inizio</h2>
+  <div class="ornamento">◆</div>
+  <p style="text-align:center;line-height:1.9;font-size:20px">
+    Un viaggio attraverso regni, alleanze,
+    rivalità e imprese memorabili.
+    Una saga in cui l'epicità incontra l'ironia
+    e ogni protagonista ha una storia da raccontare.
+  </p>
+</section>
+
+<section id="indice">
+  <h2>Le Cronache</h2>
+  <div class="ornamento">✦</div>
+  <div class="indice" id="elenco"></div>
+</section>
+
+<section id="lettura">
+  <div class="ornamento">⚒</div>
+  <h2 id="titolo-capitolo"></h2>
+  <div id="testo"></div>
+  <div class="comandi">
+    <button class="pulsante" id="precedente"
+      onclick="apriCapitolo(attuale-1)">
+      ← Precedente
+    </button>
+    <a class="pulsante" href="#indice">Indice</a>
+    <button class="pulsante" id="successivo"
+      onclick="apriCapitolo(attuale+1)">
+      Successivo →
+    </button>
+  </div>
+</section>
+
+<footer>
+  <div class="ornamento">⚒</div>
+  <p>Cronache dei Nani</p>
+  <p>Tutti i diritti riservati</p>
+</footer>
+
+<script>
+const capitoli = [
+  "Prologo",
+  ...Array.from({length:20},
+    (_,i) => "Capitolo " + (i+1)),
+  "Epilogo"
+];
+
+const racconti = {
+  0: "Il prologo verrà pubblicato qui."
+};
+
+let attuale = 0;
+
+capitoli.forEach((titolo,i) => {
+  const pulsante = document.createElement("button");
+  pulsante.className = "capitolo";
+  pulsante.textContent = titolo;
+  pulsante.onclick = () => apriCapitolo(i);
+  document.getElementById("elenco")
+    .appendChild(pulsante);
+});
+
+function apriCapitolo(i) {
+  if(i < 0 || i >= capitoli.length) return;
+  attuale = i;
+  document.getElementById("lettura")
+    .style.display = "block";
+  document.getElementById("titolo-capitolo")
+    .textContent = capitoli[i];
+  document.getElementById("testo")
+    .textContent = racconti[i] ||
+    "Questo capitolo non è ancora disponibile.";
+  document.getElementById("precedente")
+    .hidden = i === 0;
+  document.getElementById("successivo")
+    .hidden = i === capitoli.length-1;
+  document.getElementById("lettura")
+    .scrollIntoView({behavior:"smooth"});
+}
+</script>
+
+</body>
+</html>
 
