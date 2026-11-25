@@ -191,6 +191,56 @@
   margin: 0 !important;
 }
 
+.contents a.illustrato {
+  display: grid !important;
+  grid-template-columns: minmax(0, 40%) 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px 20px;
+  align-items: center;
+}
+
+.contents a.illustrato img {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 0 !important;
+}
+
+.contents a.illustrato span {
+  grid-column: 2;
+  align-self: end;
+}
+
+.contents a.illustrato strong {
+  grid-column: 2;
+  align-self: start;
+}
+
+.chapter-art {
+  display: block;
+  width: 100%;
+  max-width: 850px;
+  height: auto;
+  margin: 30px auto;
+  border-radius: 12px;
+}
+
+@media (max-width: 650px) {
+  .contents a.illustrato {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+  }
+
+  .contents a.illustrato img,
+  .contents a.illustrato span,
+  .contents a.illustrato strong {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+}
+
 </style>
 
 </style>
@@ -970,5 +1020,50 @@ chapters.forEach((c,i)=>{c.hidden=i!==0});open(0,{fromHash:true,initial:true});h
 if(!storage)$('save-status').textContent='Il browser non consente di salvare il segnalibro. La lettura resta disponibile.';
 })();
 </script>
+  
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".contents a[data-chapter]")
+    .forEach(link => {
+      const n = Number(link.dataset.chapter);
+      if (!Number.isInteger(n) || n < 0 || n > 21) return;
+
+      const file = n === 0 ? "prologo.png" :
+                   n === 21 ? "epilogo.png" :
+                   "capitolo-" + n + ".png";
+
+      const prova = new Image();
+
+      prova.onload = () => {
+        if (!link.querySelector("img")) {
+          const miniatura = document.createElement("img");
+          miniatura.src = file;
+          miniatura.alt = link.textContent.trim();
+          link.prepend(miniatura);
+        }
+
+        link.classList.add("illustrato");
+
+        const capitolo = document.getElementById(
+          link.getAttribute("href").slice(1)
+        );
+
+        if (capitolo && !capitolo.querySelector(".chapter-art")) {
+          const titolo = capitolo.querySelector("h2");
+          if (titolo) {
+            const immagine = document.createElement("img");
+            immagine.src = file;
+            immagine.alt = link.textContent.trim();
+            immagine.className = "chapter-art";
+            titolo.after(immagine);
+          }
+        }
+      };
+
+      prova.src = file;
+    });
+});
+</script>
+
 </body>
 </html>
