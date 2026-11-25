@@ -30,7 +30,106 @@
 .hero h1 {
   font-size: clamp(32px, 4vw, 60px);
 }
+.hero{
+  background:none !important;
+  min-height:auto !important;
+  padding:42px 24px 26px !important;
+  display:block !important;
+}
 
+.hero .landscape,
+.hero svg.landscape{
+  display:none !important;
+}
+
+.hero-content{
+  max-width:980px;
+  margin:0 auto 28px auto;
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+
+.hero .crest{
+  width:82px;
+  height:82px;
+  display:block;
+  margin:0 auto 14px auto;
+  color:var(--gold);
+}
+
+.hero .eyebrow{
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-size:14px;
+  margin:0 0 18px 0;
+  color:var(--gold);
+}
+
+.hero h1{
+  font-size:clamp(34px,4.5vw,68px) !important;
+  line-height:1.05;
+  margin:0 0 8px 0;
+}
+
+.hero-subtitle{
+  font-size:clamp(28px,4vw,58px);
+  line-height:1.08;
+  margin:0 0 22px 0;
+  color:var(--gold);
+  font-weight:700;
+}
+
+.tagline{
+  max-width:760px;
+  margin:0 auto 24px auto;
+  font-size:clamp(18px,2vw,22px);
+  line-height:1.6;
+}
+
+.hero-actions{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+
+.hero-meta{
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-size:14px;
+  color:var(--muted);
+  margin:0;
+}
+
+.hero-cover-wrap{
+  max-width:1320px;
+  margin:0 auto;
+}
+
+.hero-cover{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:18px;
+  box-shadow:0 18px 42px rgba(0,0,0,.35);
+  border:1px solid var(--border);
+}
+
+@media (max-width: 700px){
+  .hero{
+    padding:28px 16px 20px !important;
+  }
+
+  .hero-subtitle{
+    margin-bottom:16px;
+  }
+
+  .tagline{
+    font-size:18px;
+  }
+}
 </style>
 </head>
 <body>
@@ -39,8 +138,33 @@
 <div class="progress-track" aria-hidden="true"><div id="progress"></div></div>
 <main id="home">
 <section class="hero" aria-labelledby="book-title">
-<svg class="landscape" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#123333"/><stop offset="1" stop-color="#63735b"/></linearGradient><radialGradient id="moon"><stop stop-color="#e0d3a4" stop-opacity=".55"/><stop offset="1" stop-color="#d7cda7" stop-opacity="0"/></radialGradient><pattern id="stars" width="177" height="143" patternUnits="userSpaceOnUse"><circle cx="20" cy="32" r="1" fill="#d9d9bc" opacity=".5"/><circle cx="133" cy="90" r=".7" fill="#d9d9bc" opacity=".6"/></pattern></defs><path fill="url(#sky)" d="M0 0h1600v900H0z"/><path fill="url(#stars)" d="M0 0h1600v900H0z"/><circle cx="800" cy="240" r="260" fill="url(#moon)"/><circle cx="800" cy="240" r="83" fill="#cad2b0" opacity=".24"/><path fill="#4c665d" d="M0 540l170-220 150 170 170-290 180 275 160-330 260 380 180-245 330 300v320H0z"/><path fill="#294c46" d="M0 650l190-250 150 180 125-210 215 285 190-330 210 235 160-190 360 290v240H0z"/><path fill="#172f2c" d="M0 740l280-200 190 190 235-160 160 190 225-220 170 115 340-135v380H0z"/><g fill="#0d2421"><path d="M1050 760V470h25v-38h20v38h24v290m-9-195h145v195h-145m120 0V450h20v-30h20v30h20v310m-170-195V535h22v-25h18v25h20v30"/><path d="M0 850V670l25-70 25 70v180m30 0V600l30-90 30 90v250m1290 0V620l25-80 25 80v230m30 0V550l35-110 35 110v300"/></g><g fill="#d5b775" opacity=".65"><path d="M1081 510h8v15h-8zm160-20h8v15h-8zm-90 85h8v14h-8zm0 44h8v14h-8z"/></g><path stroke="#99ae8f" opacity=".2" fill="none" d="M0 810q400-70 800 0t800-10M100 850q400-40 800 0t650-10"/></svg>
-<div class="hero-content"><svg class="crest" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true"><path d="M50 3l37 18v37L50 94 13 58V21z" opacity=".5"/><path d="M25 35l14 10 11-20 11 20 14-10-6 33H31zM31 58h38" stroke-width="2"/><path d="M4 48h9m74 0h9M50 0v12M50 87v13"/></svg><p class="eyebrow">NANI · IKARIAM · MONDO MEDUSA</p><h1 id="book-title">Le Cronache della Lega Nanica<em>Le Venti Corone di Medusa</em></h1><p class="subtitle">Venti sovrani. Un patto. Un mondo di isole, intrighi e antichi giuramenti.</p><div class="actions"><a class="button" href="#prologo" data-chapter="0">Inizia il viaggio</a><button class="button secondary" id="resume" hidden type="button">Riprendi la lettura</button></div><p class="hero-note">ROMANZO COMPLETO · VENTI CAPITOLI · UNA SOLA LEGA</p></div>
+  <div class="hero-content">
+    <svg class="crest" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true">
+      <path d="M50 3l17 8v37l-17 20-17-20V11l17-8Z" opacity=".5"></path>
+      <path d="M25 35H11m78 0H75" opacity=".5"></path>
+      <path d="M35 52h30l-3 14H38l-3-14Zm3-20 12 8 12-8v18H38V32Zm12-8 7 8H43l7-8Z"></path>
+    </svg>
+
+    <p class="eyebrow">NANI · IKARIAM · MONDO MEDUSA</p>
+
+    <h1 id="book-title">Le Cronache della Lega Nanica</h1>
+    <h2 class="hero-subtitle">Le Venti Corone di Medusa</h2>
+
+    <p class="tagline">
+      Venti sovrani. Un patto. Un mondo di isole, intrighi e antichi giuramenti.
+    </p>
+
+    <div class="hero-actions">
+      <a class="button primary" href="#indice">Inizia il viaggio</a>
+      <a class="button secondary" href="#prologo">Riprendi: PROLOGO</a>
+    </div>
+
+    <p class="hero-meta">ROMANZO COMPLETO · VENTI CAPITOLI · UNA SOLA LEGA</p>
+  </div>
+
+  <div class="hero-cover-wrap">
+    <img src="copertina.png" alt="Copertina illustrata delle Cronache della Lega Nanica" class="hero-cover">
+  </div>
 </section>
 <section class="intro"><h2>La forza di un giuramento.</h2><p>Nei mari di Medusa, venti regni indipendenti si uniscono contro la Corona Spezzata. Tra porti, biblioteche sepolte e forge, la loro forza prende forma nelle scelte di ogni giorno. E in una buona dose di ostinazione nanica.</p></section>
 <section class="library" id="indice" aria-labelledby="index-title"><div class="section-heading"><div><p class="eyebrow">IL LIBRO DELLE VENTI CORONE</p><h2 id="index-title" tabindex="-1">Scegli la tua cronaca</h2></div><label class="search"><span>Cerca un personaggio, un luogo o una parola</span><input type="search" id="search" placeholder="Es. Kamon, Cassiopea, giuramento…" autocomplete="off"></label></div><nav class="contents" aria-label="Indice dei capitoli">
