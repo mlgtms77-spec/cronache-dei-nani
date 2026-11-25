@@ -148,6 +148,38 @@ a[data-chapter="0"] img {
   margin: 0 auto 18px !important;
 }
 
+a[data-chapter="0"] {
+  display: grid !important;
+  grid-template-columns: minmax(0, 40%) 1fr;
+  align-items: center;
+  gap: 10px 24px;
+}
+
+a[data-chapter="0"] img {
+  grid-row: 1 / 3;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  border-radius: 8px;
+}
+
+a[data-chapter="0"] span,
+a[data-chapter="0"] strong {
+  grid-column: 2;
+}
+
+@media (max-width: 600px) {
+  a[data-chapter="0"] {
+    grid-template-columns: 1fr;
+  }
+  a[data-chapter="0"] img,
+  a[data-chapter="0"] span,
+  a[data-chapter="0"] strong {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
 </style>
 </head>
 <body>
