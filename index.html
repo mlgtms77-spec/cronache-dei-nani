@@ -1067,5 +1067,61 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script>
+(function () {
+  const indice = document.getElementById("index-button");
+  if (!indice) return;
+
+  const chiave = "lega-nanica-font-personale";
+  const cursore = document.getElementById("font-size");
+  let dimensione = 21;
+
+  try {
+    dimensione = Number(localStorage.getItem(chiave)) || 21;
+  } catch (e) {}
+
+  if (cursore) {
+    cursore.min = 14;
+    cursore.max = 36;
+  }
+
+  function aggiorna(valore) {
+    dimensione = Math.max(14, Math.min(36, valore));
+
+    document.documentElement.style.setProperty(
+      "--body-size", dimensione + "px"
+    );
+
+    if (cursore) cursore.value = dimensione;
+
+    try {
+      localStorage.setItem(chiave, dimensione);
+    } catch (e) {}
+  }
+
+  function crea(testo, titolo, azione) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = testo;
+    b.title = titolo;
+    b.setAttribute("aria-label", titolo);
+    b.addEventListener("click", azione);
+    indice.before(b);
+  }
+
+  crea("A−", "Riduci carattere", () => aggiorna(dimensione - 1));
+  crea("A+", "Ingrandisci carattere", () => aggiorna(dimensione + 1));
+  crea("A", "Ripristina carattere", () => aggiorna(21));
+
+  if (cursore) {
+    cursore.addEventListener("input", () => {
+      aggiorna(Number(cursore.value));
+    });
+  }
+
+  aggiorna(dimensione);
+})();
+</script>
+
 </body>
 </html>
