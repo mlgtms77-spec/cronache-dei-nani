@@ -1402,6 +1402,207 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 })();
 </script>
+
   
+<style>
+.share-saga {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 26px;
+  margin: 40px auto;
+  max-width: 850px;
+  text-align: center;
+  color: var(--text);
+}
+
+.share-saga h3 {
+  color: var(--gold);
+  font-size: 26px;
+  margin: 10px 0;
+}
+
+.share-saga .share-label {
+  color: var(--gold);
+  font: 12px system-ui, sans-serif;
+  letter-spacing: 3px;
+}
+
+.share-saga p {
+  font-size: 16px;
+  margin: 12px 0 22px;
+}
+
+.share-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.share-links a,
+.share-links button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.share-links a:hover,
+.share-links button:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.share-links .share-copy {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.share-status {
+  margin-top: 15px;
+  font: 13px system-ui, sans-serif;
+  color: var(--gold);
+}
+
+@media print {
+  .share-saga {
+    display: none !important;
+  }
+}
+</style>
+
+<script>
+(function () {
+  const sito =
+    "https://mlgtms77-spec.github.io/cronache-dei-nani/";
+
+  const titolo =
+    "Le Cronache della Lega Nanica - Le Venti Corone di Medusa";
+
+  function creaCondivisione(url, nome) {
+
+    const box = document.createElement("section");
+    box.className = "share-saga";
+
+    box.innerHTML = `
+      <div class="share-label">
+        DIFFONDI LA LEGGENDA
+      </div>
+
+      <h3>Condividi la saga</h3>
+
+      <p>Le grandi leggende meritano
+      di essere raccontate.</p>
+
+      <div class="share-links"></div>
+      <div class="share-status" role="status"></div>
+    `;
+
+    const links = box.querySelector(".share-links");
+    const stato = box.querySelector(".share-status");
+
+    const messaggio = titolo +
+      (nome ? "\n" + nome : "") +
+      "\n\nScopri la leggenda delle Venti Corone!";
+
+    const u = encodeURIComponent(url);
+    const t = encodeURIComponent(messaggio);
+
+    const social = [
+      ["WhatsApp",
+        "https://wa.me/?text=" +
+        encodeURIComponent(messaggio + "\n" + url)],
+
+      ["Telegram",
+        "https://t.me/share/url?url=" + u + "&text=" + t],
+
+      ["Facebook",
+        "https://www.facebook.com/sharer/sharer.php?u=" + u],
+
+      ["Email",
+        "mailto:?subject=" +
+        encodeURIComponent(titolo) +
+        "&body=" +
+        encodeURIComponent(messaggio + "\n" + url)]
+    ];
+
+    social.forEach(([nome, indirizzo]) => {
+      const a = document.createElement("a");
+      a.textContent = nome;
+      a.href = indirizzo;
+
+      if (nome !== "Email") {
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+      }
+
+      links.appendChild(a);
+    });
+
+    const copia = document.createElement("button");
+    copia.type = "button";
+    copia.className = "share-copy";
+    copia.textContent = "Copia collegamento";
+
+    copia.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        stato.textContent = "Collegamento copiato!";
+      } catch (e) {
+        window.prompt("Copia questo collegamento:", url);
+      }
+    };
+
+    links.appendChild(copia);
+
+    if (navigator.share) {
+      const condividi = document.createElement("button");
+      condividi.type = "button";
+      condividi.textContent = "Altre opzioni";
+
+      condividi.onclick = async () => {
+        try {
+          await navigator.share({
+            title: titolo,
+            text: messaggio,
+            url: url
+          });
+        } catch (e) {}
+      };
+
+      links.appendChild(condividi);
+    }
+
+    return box;
+  }
+
+  const intro = document.querySelector(".intro");
+
+  if (intro) {
+    intro.after(creaCondivisione(sito, ""));
+  }
+
+  document.querySelectorAll(".chapter").forEach(capitolo => {
+    if (!capitolo.id) return;
+
+    const h2 = capitolo.querySelector("h2");
+    const nome = h2 ? h2.textContent.trim() : "";
+
+    capitolo.appendChild(
+      creaCondivisione(sito + "#" + capitolo.id, nome)
+    );
+  });
+
+})();
+</script>
+
 </body>
 </html>
