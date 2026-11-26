@@ -1123,5 +1123,285 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 
+
+
+<style>
+.audio-reader {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 0 auto 35px;
+  font: 14px system-ui, sans-serif;
+  color: var(--text);
+  text-align: center;
+}
+
+.audio-reader .audio-title {
+  color: var(--gold);
+  letter-spacing: 2px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.audio-buttons, .audio-settings {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.audio-reader button,
+.audio-reader select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 10px;
+  font: inherit;
+  max-width: 100%;
+}
+
+.audio-reader button:hover {
+  border-color: var(--gold);
+}
+
+.audio-reader .audio-play {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.audio-highlight {
+  background: rgba(190,155,80,.17);
+  outline: 2px solid var(--gold);
+  border-radius: 4px;
+}
+
+.audio-status {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media print {
+  .audio-reader { display: none !important; }
+}
+</style>
+
+<script>
+(function () {
+  const voce = window.speechSynthesis;
+
+  if (!voce || !window.SpeechSynthesisUtterance) {
+    return;
+  }
+
+  const capitoli = [...document.querySelectorAll(".chapter")];
+
+  let attivo = null;
+  let frase = null;
+  let sessione = 0;
+  let paragrafo = null;
+  let inPausa = false;
+  let voci = [];
+  const lettori = [];
+
+  function aggiornaVoci() {
+    voci = voce.getVoices().filter(
+      v => /^it\b/i.test(v.lang)
+    );
+
+    lettori.forEach(l => {
+      const precedente = l.scelta.value;
+      l.scelta.replaceChildren(
+        new Option("Voce italiana predefinita", "")
+      );
+
+      voci.forEach(v => {
+        l.scelta.add(new Option(v.name, v.voiceURI));
+      });
+
+      if (voci.some(v => v.voiceURI === precedente)) {
+        l.scelta.value = precedente;
+      }
+    });
+  }
+
+  function ferma() {
+    sessione++;
+    voce.cancel();
+
+    if (paragrafo) {
+      paragrafo.classList.remove("audio-highlight");
+    }
+
+    if (attivo) {
+      attivo.stato.textContent = "Pronto per la lettura";
+    }
+
+    attivo = null;
+    paragrafo = null;
+    frase = null;
+    inPausa = false;
+  }
+
+  function leggi(lettore, indice, token) {
+    if (token !== sessione) return;
+
+    if (indice >= lettore.testi.length) {
+      ferma();
+      lettore.stato.textContent = "Lettura completata";
+      return;
+    }
+
+    if (paragrafo) {
+      paragrafo.classList.remove("audio-highlight");
+    }
+
+    paragrafo = lettore.testi[indice];
+    paragrafo.classList.add("audio-highlight");
+
+    frase = new SpeechSynthesisUtterance(
+      paragrafo.textContent.trim()
+    );
+
+    frase.lang = "it-IT";
+    frase.rate = Number(lettore.velocita.value);
+
+    const scelta = voci.find(
+      v => v.voiceURI === lettore.scelta.value
+    );
+
+    if (scelta) frase.voice = scelta;
+
+    lettore.stato.textContent =
+      "Lettura in corso · " +
+      (indice + 1) + " / " + lettore.testi.length;
+
+    frase.onend = () => {
+      if (token === sessione) {
+        leggi(lettore, indice + 1, token);
+      }
+    };
+
+    frase.onerror = () => {
+      if (token !== sessione) return;
+      ferma();
+      lettore.stato.textContent =
+        "Lettura interrotta. Riprova.";
+    };
+
+    voce.speak(frase);
+  }
+
+  capitoli.forEach(capitolo => {
+    const intestazione =
+      capitolo.querySelector(".chapter-heading");
+
+    if (!intestazione) return;
+
+    const testi = [...capitolo.querySelectorAll("p, h3")]
+      .filter(el =>
+        !el.closest(".chapter-heading") &&
+        el.textContent.trim()
+      );
+
+    if (!testi.length) return;
+
+    const pannello = document.createElement("div");
+    pannello.className = "audio-reader";
+
+    pannello.innerHTML = `
+      <div class="audio-title">
+        ♫ ASCOLTA LA CRONACA
+      </div>
+
+      <div class="audio-buttons">
+        <button type="button" class="audio-play">
+          ▶ Ascolta
+        </button>
+        <button type="button" class="audio-pause">
+          ⏸ Pausa
+        </button>
+        <button type="button" class="audio-continue">
+          ▶ Riprendi
+        </button>
+        <button type="button" class="audio-stop">
+          ■ Stop
+        </button>
+      </div>
+
+      <div class="audio-settings">
+        <select class="audio-voice" aria-label="Voce narrante">
+          <option value="">Italiano</option>
+        </select>
+
+        <select class="audio-speed" aria-label="Velocità">
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+        </select>
+      </div>
+
+      <div class="audio-status" role="status">
+        Pronto per la lettura
+      </div>
+    `;
+
+    intestazione.after(pannello);
+
+    const lettore = {
+      capitolo,
+      testi,
+      scelta: pannello.querySelector(".audio-voice"),
+      velocita: pannello.querySelector(".audio-speed"),
+      stato: pannello.querySelector(".audio-status")
+    };
+
+    lettori.push(lettore);
+
+    pannello.querySelector(".audio-play").onclick = () => {
+      ferma();
+      attivo = lettore;
+      leggi(lettore, 0, sessione);
+    };
+
+    pannello.querySelector(".audio-pause").onclick = () => {
+      if (attivo !== lettore) return;
+      voce.pause();
+      inPausa = true;
+      lettore.stato.textContent = "In pausa";
+    };
+
+    pannello.querySelector(".audio-continue").onclick = () => {
+      if (attivo !== lettore || !inPausa) return;
+      voce.resume();
+      inPausa = false;
+      lettore.stato.textContent = "Lettura in corso";
+    };
+
+    pannello.querySelector(".audio-stop").onclick = ferma;
+  });
+
+  aggiornaVoci();
+  voce.addEventListener("voiceschanged", aggiornaVoci);
+
+  window.addEventListener("hashchange", ferma);
+  window.addEventListener("pagehide", ferma);
+
+  capitoli.forEach(capitolo => {
+    new MutationObserver(() => {
+      if (attivo && attivo.capitolo.hidden) {
+        ferma();
+      }
+    }).observe(capitolo, {
+      attributes: true,
+      attributeFilter: ["hidden"]
+    });
+  });
+})();
+</script>
+  
 </body>
 </html>
